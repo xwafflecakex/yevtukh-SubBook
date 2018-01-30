@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:hint="Enter Date Started..."
+        android:inputType="date"
+        android:padding="15dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="62dp" />
+
+    <EditText
+        android:id="@+id/editTextCharge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:hint="Enter Monthly Charge..."
+        android:inputType="numberDecimal"
+        android:padding="15dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="121dp" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:hint="Enter Name of  Subscription..."
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        android:singleLine="false"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/editTextComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:hint="Enter Comments..."
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="167dp" />
+
+</android.support.constraint.ConstraintLayout>

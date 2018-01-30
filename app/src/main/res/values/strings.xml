@@ -2,4 +2,5 @@
     <string name="app_name">yevtukh-SubBook</string>
     <string name="add_subscription">Add Subscription</string>
     <string name="remove_subscription" />
+    <string name="total_monthly_expense">Total Monthly Expense</string>
 </resources>

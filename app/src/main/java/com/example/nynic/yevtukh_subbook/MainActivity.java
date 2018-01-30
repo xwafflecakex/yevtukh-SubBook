@@ -6,15 +6,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,70 +53,61 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Toolbar toolbarTop = (Toolbar) findViewById(R.id.toolbarTop);
         ListView listView = findViewById(R.id.listView);
-        TextView textView = findViewById(R.id.textView);
-        //setSupportActionBar(toolbarTop);
+        TextView textView = findViewById(R.id.totalText);
         //Testing array list for Subs
-        final ArrayList<String> robPeople  = new ArrayList<String>();
-        robPeople.add("Rob");
-        robPeople.add("Kristen");
-        robPeople.add("Tommy");
-        robPeople.add("Ralphie");
-        robPeople.add("Ralphie");
-        robPeople.add("Ralphie");
-        robPeople.add("Ralphie");
-        robPeople.add("Ralphie");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
-        robPeople.add("Tommy");
+        HashMap<String, String> nameAddresses = new HashMap<>();
+        nameAddresses.put("Diana", "3214 Broadway Avenue");
+        nameAddresses.put("Tyga", "343 Rack City Drive");
+        nameAddresses.put("Rich Homie Quan", "111 Everything Gold Way");
+        nameAddresses.put("Donna", "789 Escort St");
+        nameAddresses.put("Bartholomew", "332 Dunkin St");
+        nameAddresses.put("Eden", "421 Angelic Blvd");
+        nameAddresses.put("Dina", "3214 Broadway Avenue");
+        nameAddresses.put("Tga", "343 Rack City Drive");
+        nameAddresses.put("Rch Homie Quan", "111 Eveything Gold Way");
+        nameAddresses.put("Donna", "789 Ecort St");
+        nameAddresses.put("Bartolomew", "332 Dukin St");
+        nameAddresses.put("Een", "421 Angelic Blvd");
+
+        List<HashMap<String, String>> listItems = new ArrayList<>();
+        SimpleAdapter adapter = new SimpleAdapter(this, listItems, R.layout.list_item,
+                new String[]{"First Line", "Second Line"},
+                new int[]{R.id.nameText, R.id.price});
 
 
+        Iterator iterator = nameAddresses.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, String> resultsMap = new HashMap<>();
+            Map.Entry pair = (Map.Entry)iterator.next(); //just want the key value pair per iteration
+            resultsMap.put("First Line", pair.getKey().toString());
+            resultsMap.put("Second Line", pair.getValue().toString());
+            listItems.add(resultsMap);
+        }
 
-        //Using an array adapter to change to a list format.
-        ArrayAdapter<String> arrayAdapter =  new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, robPeople);
+        listView.setAdapter(adapter);
 
-        listView.setAdapter(arrayAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
-                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disappears.
-                Log.i("Person Tapped: ", robPeople.get(i));
-                Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + robPeople.get(i),Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
     }
-
-
-
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.add_sub:
-//                // User chose the "add" item, show the app settings UI...
-//                Toast.makeText(this, "Add_Sub clicked", Toast.LENGTH_LONG).show();
-//                return true;
-//
-//            case R.id.remove_sub:
-//                // User chose the "remove" action, mark the current item
-//                Toast.makeText(this, "Remove_Sub clicked", Toast.LENGTH_LONG).show();
-//
-//                return true;
-//
-//            default:
-//                // If we got here, the user's action was not recognized.
-//                // Invoke the superclass to handle it.
-//                return super.onOptionsItemSelected(item);
-//
-//        }
-//    }
-
 }
+
+
+
+
+    /*TODO
+     -Gonna use Hash map with list view. <-----------------------------------------------------------Done.
+     -For the plus make two options, add or edit drop-downs.
+     -Need to make activities for add_sub for input of details then storing them.
+     -Make activities for remove_sub removing details gonna use name and charge as a type of id.
+     -Add back buttons for both activities.
+     -Add class subscription that makes sub objects. <-----------------------------------------------Done.
+     -Link sub objects to the ArrayList.
+     -Calc total, and display
+     -Enforce input rules.
+     -Do encap stuff
+     -Finalize.
+     -Do video demo
+     -Submit.
+     */
+
+
+
