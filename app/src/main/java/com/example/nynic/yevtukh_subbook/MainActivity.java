@@ -6,9 +6,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,36 +60,52 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView);
         TextView textView = findViewById(R.id.totalText);
         //Testing array list for Subs
-        HashMap<String, String> nameAddresses = new HashMap<>();
-        nameAddresses.put("Diana", "3214 Broadway Avenue");
-        nameAddresses.put("Tyga", "343 Rack City Drive");
-        nameAddresses.put("Rich Homie Quan", "111 Everything Gold Way");
-        nameAddresses.put("Donna", "789 Escort St");
-        nameAddresses.put("Bartholomew", "332 Dunkin St");
-        nameAddresses.put("Eden", "421 Angelic Blvd");
-        nameAddresses.put("Dina", "3214 Broadway Avenue");
-        nameAddresses.put("Tga", "343 Rack City Drive");
-        nameAddresses.put("Rch Homie Quan", "111 Eveything Gold Way");
-        nameAddresses.put("Donna", "789 Ecort St");
-        nameAddresses.put("Bartolomew", "332 Dukin St");
-        nameAddresses.put("Een", "421 Angelic Blvd");
+        final HashMap<String, Float> testSub = new HashMap<>();
+        testSub.put("Diana", (float) 24.09);
+        testSub.put("Tyga", (float) 243.45);
+        testSub.put("Rich Homie Quan", (float) 24);
+        testSub.put("Donna", (float) 33.0);
+        testSub.put("Bartholomew", (float) 33.0);
+        testSub.put("Eden", (float) 33.0);
+        testSub.put("Dina", (float) 33.0);
+        testSub.put("Tga", (float) 33.0);
+        testSub.put("Rch Homie Quan", (float) 33.0);
+        testSub.put("Donna", (float) 33.0);
+        testSub.put("Bartolomew", (float) 33.0);
+        testSub.put("Een", (float) 24);
+        float sum= (float) 0.0;
+        for (float value : testSub.values()) {
+            sum += value;
+        }
+
+        textView.append(" " + Float.toString(sum));
+
 
         List<HashMap<String, String>> listItems = new ArrayList<>();
         SimpleAdapter adapter = new SimpleAdapter(this, listItems, R.layout.list_item,
                 new String[]{"First Line", "Second Line"},
                 new int[]{R.id.nameText, R.id.price});
 
-
-        Iterator iterator = nameAddresses.entrySet().iterator();
+        Iterator iterator = testSub.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap<String, String> resultsMap = new HashMap<>();
             Map.Entry pair = (Map.Entry)iterator.next(); //just want the key value pair per iteration
             resultsMap.put("First Line", pair.getKey().toString());
-            resultsMap.put("Second Line", pair.getValue().toString());
+            resultsMap.put("Second Line", " $" + pair.getValue().toString());
             listItems.add(resultsMap);
         }
-
         listView.setAdapter(adapter);
+
+        //If tapped on do shit. Don't know of use yet.
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
+//                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
+//                Log.i("Person Tapped: ",String.valueOf(l));
+//                //Toast toast = Toast.makeText(getApplicationContext(), "Hello " + testSub.get(i),Toast.LENGTH_LONG);
+//                //toast.show();
+//            }
+//        });
 
     }
 }

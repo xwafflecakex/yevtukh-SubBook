@@ -7,10 +7,10 @@ package com.example.nynic.yevtukh_subbook;
 public class Subscription {
     private String name;
     private String date;
-    private double price;
+    private float price;
     private String comment;
 
-    public Subscription(String name, String date, double price, String comment) {
+    public Subscription(String name, String date, float price, String comment) {
         this.name = name;
         this.date = date;
         this.price = price;
@@ -37,7 +37,7 @@ public class Subscription {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
