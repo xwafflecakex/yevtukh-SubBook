@@ -13,6 +13,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-
+    //Gson gson = new Gson();
 
 
     /*TODO
