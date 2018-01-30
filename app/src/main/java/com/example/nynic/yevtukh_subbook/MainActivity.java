@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
      -Link sub objects to the ArrayList.
      -Calc total, and display
      -Enforce input rules.
-     -Do encap stuff
+     -Do encapsulate stuff
      -Finalize.
      -Do video demo
      -Submit.
