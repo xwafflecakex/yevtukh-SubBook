@@ -8,7 +8,7 @@ public class Subscription {
     private String name;
     private String date;
     private float price;
-    private String comment;
+    private String comment = "";
 
     public Subscription(String name, String date, float price, String comment) {
         this.name = name;

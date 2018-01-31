@@ -19,10 +19,16 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
+
+    ListView listView;
+    TextView textView;
+    final LinkedHashMap<String, Float> testSub = new LinkedHashMap<>();
 
     //Menu inflater, worker.
     @Override
@@ -49,8 +55,14 @@ public class MainActivity extends AppCompatActivity {
             case  R.id.remove_sub:
                 Log.i("Menu item selected", "remove_sub");
 
-                myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
-                startActivityForResult( myIntent,0);
+
+
+
+                deleteSub(testSub);
+
+
+                //myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
+                //startActivityForResult( myIntent,0);
                 return true;
             case  R.id.edit_sub:
                 Log.i("Menu item selected", "edit_sub");
@@ -64,18 +76,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void deleteSub(final LinkedHashMap map){
+
+
+        //If tapped on do shit. Don't know of use yet.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
+                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
+                Set mapSet = map.entrySet();
+                Map.Entry<String, Float> picked = (Map.Entry<String, Float>) mapSet.toArray()[i];
+
+                /// Sweet it worked thanks to..https://gist.github.com/tejainece/d32cba84b747c0b2e7df. Just need the above 2 lines.
+                Log.i("Person Tapped: ",  picked.getKey());
+
+                //Now if remove button pressed, we simply tap the wanted item to remove.
+
+                //Toast toast = Toast.makeText(getApplicationContext(), "Hello " + testSub.get(i),Toast.LENGTH_LONG);
+                //toast.show();
+            }
+        });
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = findViewById(R.id.listView);
-        TextView textView = findViewById(R.id.totalText);
+        listView = findViewById(R.id.listView);
+        textView = findViewById(R.id.totalText);
         //Testing array list for Subs
 
         // So the Name is the Key and the Charge and Date Started are the values.
         // So far cannot think of a way to have same name Sub.
-        final HashMap<String, Float> testSub = new HashMap<>();
+
         testSub.put("Diana", (float) 24.09);
         testSub.put("Tyga", (float) 243.45);
         testSub.put("Rich Homie Quan", (float) 24);
@@ -95,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
         textView.append(" " + Float.toString(sum));
 
-
         List<HashMap<String, String>> listItems = new ArrayList<>();
         SimpleAdapter adapter = new SimpleAdapter(this, listItems, R.layout.list_item,
                 new String[]{"First Line", "Second Line"},
@@ -109,18 +145,10 @@ public class MainActivity extends AppCompatActivity {
             resultsMap.put("Second Line", " $" + pair.getValue().toString());
             listItems.add(resultsMap);
         }
+
+
         listView.setAdapter(adapter);
 
-        //If tapped on do shit. Don't know of use yet.
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
-//                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
-//                Log.i("Person Tapped: ",String.valueOf(l));
-//                //Toast toast = Toast.makeText(getApplicationContext(), "Hello " + testSub.get(i),Toast.LENGTH_LONG);
-//                //toast.show();
-//            }
-//        });
 
     }
 }
