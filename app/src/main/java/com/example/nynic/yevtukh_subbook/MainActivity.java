@@ -38,15 +38,19 @@ public class MainActivity extends AppCompatActivity {
     //// Menu stuff.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent myIntent;
         switch (item.getItemId()){
             case R.id.add_sub:
                 Log.i("Menu item selected", "add_sub");
 
-                Intent myIntent = new Intent(MainActivity.this, AddSubscription.class);
+                myIntent = new Intent(MainActivity.this, AddSubscription.class);
                 startActivityForResult( myIntent,0);
                 return true;
             case  R.id.remove_sub:
                 Log.i("Menu item selected", "remove_sub");
+
+                myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
+                startActivityForResult( myIntent,0);
                 return true;
             case  R.id.edit_sub:
                 Log.i("Menu item selected", "edit_sub");
@@ -68,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView);
         TextView textView = findViewById(R.id.totalText);
         //Testing array list for Subs
+
+        // So the Name is the Key and the Charge and Date Started are the values.
+        // So far cannot think of a way to have same name Sub.
         final HashMap<String, Float> testSub = new HashMap<>();
         testSub.put("Diana", (float) 24.09);
         testSub.put("Tyga", (float) 243.45);
