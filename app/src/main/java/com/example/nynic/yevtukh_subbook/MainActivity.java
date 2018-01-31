@@ -1,5 +1,6 @@
 package com.example.nynic.yevtukh_subbook;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    //Menu inflater, worker.
     @Override
     public boolean onCreateOptionsMenu(Menu subMenu) {
         //linking menu.xml
@@ -31,19 +32,24 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.sub_menu,subMenu);
 
-
         return super.onCreateOptionsMenu(subMenu);
     }
 
-
+    //// Menu stuff.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.add_sub:
                 Log.i("Menu item selected", "add_sub");
+
+                Intent myIntent = new Intent(MainActivity.this, AddSubscription.class);
+                startActivityForResult( myIntent,0);
                 return true;
             case  R.id.remove_sub:
                 Log.i("Menu item selected", "remove_sub");
+                return true;
+            case  R.id.edit_sub:
+                Log.i("Menu item selected", "edit_sub");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*TODO
      -Gonna use Hash map with list view. <-----------------------------------------------------------Done.
-     -For the plus make two options, add or edit drop-downs.
+     -For the plus make two options, add or edit drop-downs. // made a separate edit button<---------Done.
      -Need to make activities for add_sub for input of details then storing them.
      -Make activities for remove_sub removing details gonna use name and charge as a type of id.
      -Add back buttons for both activities.
