@@ -202,7 +202,9 @@ public class AddSubscription extends AppCompatActivity {
 
 
 
+
         /*TODO
+        -Need to make date string correct.
         -Need to make a sub.
         -Need to store sub in hash map for array list.
         -need to save sub  with Gson.after button press.
