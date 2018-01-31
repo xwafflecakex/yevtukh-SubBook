@@ -1,6 +1,7 @@
 package com.example.nynic.yevtukh_subbook;
 
 import android.app.Activity;
+import android.os.Build;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.support.annotation.Nullable;
 import android.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 /**
@@ -18,6 +21,11 @@ import android.widget.EditText;
  */
 
 public class AddSubscription extends AppCompatActivity {
+    EditText editTextName;
+    EditText editTextDate;
+    EditText editTextCharge;
+    EditText editTextComment;
+    Button saveBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +35,29 @@ public class AddSubscription extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The Text Stuff.
-        EditText editTextName = findViewById(R.id.editTextName);
-        EditText editTextDate = findViewById(R.id.editTextDate);
-        EditText editTextCharge = findViewById(R.id.editTextCharge);
-        EditText editTextComment = findViewById(R.id.editTextComment);
+        editTextName = findViewById(R.id.editTextName);
+        editTextDate = findViewById(R.id.editTextDate);
+        editTextCharge = findViewById(R.id.editTextCharge);
+        editTextComment = findViewById(R.id.editTextComment);
+        saveBtn = findViewById(R.id.buttonSave);
 
 
 
 
 
 
+    }
 
+    public void saveSub(View view){
+        //Testing the fields.
+        Log.i("Name",editTextName.getText().toString());
+        Log.i("date",editTextDate.getText().toString());
+        //Restrict negative numbers. Done.
+        Log.i("Charge",editTextCharge.getText().toString());
+        Log.i("Comment",editTextComment.getText().toString());
+        Log.i("Save Button","Button was pressed");
+
+        //making and alert to save.
     }
 
     @Override
