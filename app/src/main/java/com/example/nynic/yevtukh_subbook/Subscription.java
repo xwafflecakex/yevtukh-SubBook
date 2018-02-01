@@ -2,6 +2,8 @@ package com.example.nynic.yevtukh_subbook;
 
 import android.util.StringBuilderPrinter;
 
+import java.util.ArrayList;
+
 /**
  * Created by nynic on 2018-01-29.
  */
@@ -11,6 +13,7 @@ public class Subscription {
     private String date;
     private float charge;
     private String comment = "";
+
 
 //    public Subscription(String name, String date, float price, String comment) {
 //        this.name = name;
@@ -55,4 +58,10 @@ public class Subscription {
         String s = this.name + "//" + this.date + "//" + this.charge + "//" + this.comment;
         return s;
     }
+
+    public String toString(){
+        return this.name + "//" + this.date + "//" + this.charge + "//" + this.comment;
+    }
+
+
 }

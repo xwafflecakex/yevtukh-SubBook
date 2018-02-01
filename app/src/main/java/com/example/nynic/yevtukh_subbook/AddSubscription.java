@@ -1,31 +1,25 @@
 package com.example.nynic.yevtukh_subbook;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.support.annotation.Nullable;
-import android.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * Created by nynic on 2018-01-30.
@@ -33,7 +27,7 @@ import java.util.regex.Pattern;
 
 public class AddSubscription extends AppCompatActivity {
 
-    SubscriptionList subList = new SubscriptionList();
+    ArrayList<Subscription> subList = SubscriptionList.getSubList();
     EditText editTextName;
     EditText editTextDate;
     EditText editTextCharge;
@@ -50,6 +44,9 @@ public class AddSubscription extends AppCompatActivity {
         // Really wanted to get the back button working, thanks to this https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar.
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
 
         name = false;
         date = false;
@@ -194,10 +191,13 @@ public class AddSubscription extends AppCompatActivity {
 
     public void saveSub(View view){
 
-        Subscription newSub = new Subscription();
-        LinkedHashMap<String, Float> newSubList = subList.getSubList();
-        boolean dateVer=false;
 
+
+
+        Subscription newSub = new Subscription();
+
+
+        Log.i("List contents", SubscriptionList.getSubList().toString());
 
         Matcher m = Pattern.compile("[0-9]{4}-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
         if (!m.matches()){
@@ -227,15 +227,22 @@ public class AddSubscription extends AppCompatActivity {
                 }catch (Exception e){
                     Log.i("Exception", e.toString());
                 }
-                newSub.setComment(editTextName.getText().toString());
+                newSub.setComment(editTextComment.getText().toString());
 
                 Log.i("This is the new sub",newSub.printSub());
+            try {
+                SubscriptionList.addToList(newSub);
+            }catch (Exception e){
+                Log.i("Exception", e.toString());
+            }
+                //now gson save stuff.
+
+
+
         }
 
 
 
-
-        //Gotta add it to hashmap now.
 
 
 
