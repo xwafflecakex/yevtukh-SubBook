@@ -26,9 +26,9 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    SubscriptionList list = new SubscriptionList();
     ListView listView;
     TextView textView;
-    final LinkedHashMap<String, Float> testSub = new LinkedHashMap<>();
 
     //Menu inflater, worker.
     @Override
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                deleteSub(testSub);
+                deleteSub(list.getSubList());
 
 
                 //myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -112,21 +113,25 @@ public class MainActivity extends AppCompatActivity {
 
         // So the Name is the Key and the Charge and Date Started are the values.
         // So far cannot think of a way to have same name Sub.
+        LinkedHashMap<String, Float> sublist = list.getSubList();
+        sublist.put("Diana", (float) 24.09);
+        sublist.put("Tyga", (float) 243.45);
+        sublist.put("Rich Homie Quan", (float) 24);
+        sublist.put("Donna", (float) 33.0);
+        sublist.put("Bartholomew", (float) 33.0);
+        sublist.put("Eden", (float) 33.0);
+        sublist.put("Dina", (float) 33.0);
+        sublist.put("Tga", (float) 33.0);
+        sublist.put("Rch Homie Quan", (float) 33.0);
+        sublist.put("Donna", (float) 33.0);
+        sublist.put("Bartolomew", (float) 33.0);
+        sublist.put("Een", (float) 24);
+        list.setSubList(sublist);
 
-        testSub.put("Diana", (float) 24.09);
-        testSub.put("Tyga", (float) 243.45);
-        testSub.put("Rich Homie Quan", (float) 24);
-        testSub.put("Donna", (float) 33.0);
-        testSub.put("Bartholomew", (float) 33.0);
-        testSub.put("Eden", (float) 33.0);
-        testSub.put("Dina", (float) 33.0);
-        testSub.put("Tga", (float) 33.0);
-        testSub.put("Rch Homie Quan", (float) 33.0);
-        testSub.put("Donna", (float) 33.0);
-        testSub.put("Bartolomew", (float) 33.0);
-        testSub.put("Een", (float) 24);
+
+
         float sum= (float) 0.0;
-        for (float value : testSub.values()) {
+        for (float value : sublist.values()) {
             sum += value;
         }
 
@@ -137,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{"First Line", "Second Line"},
                 new int[]{R.id.nameText, R.id.price});
 
-        Iterator iterator = testSub.entrySet().iterator();
+        Iterator iterator = sublist.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap<String, String> resultsMap = new HashMap<>();
             Map.Entry pair = (Map.Entry)iterator.next(); //just want the key value pair per iteration
@@ -152,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
-
-    //Gson gson = new Gson();
 
 
     /*TODO

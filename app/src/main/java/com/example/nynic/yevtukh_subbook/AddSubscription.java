@@ -23,12 +23,17 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by nynic on 2018-01-30.
  */
 
 public class AddSubscription extends AppCompatActivity {
+
+    SubscriptionList subList = new SubscriptionList();
     EditText editTextName;
     EditText editTextDate;
     EditText editTextCharge;
@@ -74,7 +79,9 @@ public class AddSubscription extends AppCompatActivity {
         Log.i("Charge",editTextCharge.getText().toString());
         Log.i("Comment",editTextComment.getText().toString());
 
-        //Subscription subscription= new Subscription(editTextName.getText().toString(), editTextDate.getText().toString().);
+
+
+
 
     }
     private TextWatcher chargeTextWatcher = new TextWatcher() {
@@ -172,7 +179,11 @@ public class AddSubscription extends AppCompatActivity {
             }
         }
         @Override
-        public void afterTextChanged(Editable editable) {}
+        public void afterTextChanged(Editable editable) {
+
+
+
+        }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     };
@@ -183,21 +194,74 @@ public class AddSubscription extends AppCompatActivity {
 
     public void saveSub(View view){
 
+        Subscription newSub = new Subscription();
+        LinkedHashMap<String, Float> newSubList = subList.getSubList();
+        boolean dateVer=false;
 
-        new AlertDialog.Builder(this)
-                .setIcon((android.R.drawable.ic_dialog_alert))
-                .setTitle("Hey!")
-                .setMessage("Are you sure you want to add this Subscription?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //Yes.
-                        Toast.makeText(AddSubscription.this, "Saved!", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
-        Log.i("Save Button","Button was pressed");
+
+        Matcher m = Pattern.compile("[0-9]{4}-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
+        if (!m.matches()){
+            saveBtn.setEnabled(false);
+            new AlertDialog.Builder(this)
+                    .setIcon((android.R.drawable.ic_dialog_alert))
+                    .setTitle("Hey!")
+                    .setMessage("Please enter a date in the format of YYYY-MM-DD and a real month and day.")
+                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Yes.
+                            saveBtn.setEnabled(true);
+                        }
+                    })
+                    .show();
+        }else{
+                saveBtn.setEnabled(true);
+                newSub.setDate(editTextDate.getText().toString());
+                //There is my hash map  to work with.
+                newSub.setName(editTextName.getText().toString());
+                //the date check verification.
+
+
+                try { //Basically a null catcher.
+                    newSub.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
+                }catch (Exception e){
+                    Log.i("Exception", e.toString());
+                }
+                newSub.setComment(editTextName.getText().toString());
+
+                Log.i("This is the new sub",newSub.printSub());
+        }
+
+
+
+
+        //Gotta add it to hashmap now.
+
+
+
+        //Saving the hashMap
+
+
+
+
+
+
+
+
+
+//        new AlertDialog.Builder(this)
+//                .setIcon((android.R.drawable.ic_dialog_alert))
+//                .setTitle("Hey!")
+//                .setMessage("Are you sure you want to add this Subscription?")
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        //Yes.
+//                        Toast.makeText(AddSubscription.this, "Saved!", Toast.LENGTH_LONG).show();
+//                    }
+//                })
+//                .setNegativeButton("No", null)
+//                .show();
         //making and alert to save.When save is pressed.
 
 
