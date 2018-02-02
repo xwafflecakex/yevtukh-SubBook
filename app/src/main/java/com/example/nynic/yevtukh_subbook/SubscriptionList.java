@@ -11,18 +11,18 @@ import java.util.ArrayList;
 public class SubscriptionList extends Application{
 
 
-    private static ArrayList<Subscription> subList = new ArrayList<>();
+    private  ArrayList<Subscription> subList = new ArrayList<>();
 
 
-    public static void addToList(Subscription subscription){
+    public void addToList(Subscription subscription){
         subList.add(subscription);
     }
 
-    public static ArrayList<Subscription> getSubList() {
+    public ArrayList<Subscription> getSubList() {
         return subList;
     }
 
-    public void setSubList(ArrayList<Subscription> subList) {
-        this.subList = subList;
+    public  void setSubList(ArrayList<Subscription> subist) {
+        subList = subist;
     }
 }

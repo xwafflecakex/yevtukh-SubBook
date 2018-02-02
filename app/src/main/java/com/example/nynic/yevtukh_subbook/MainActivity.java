@@ -1,9 +1,13 @@
 package com.example.nynic.yevtukh_subbook;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -36,15 +42,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<Subscription> subList;
     private static final String FILENAME = "subscriptions.sav";
-    Context context;
+    private static final String EXPENSE = "TOTAL MONTHLY EXPENSE:";
     private ListView listView;
     private TextView textView;
+    EditText editTextName;
+    EditText editTextDate;
+    EditText editTextCharge;
+    EditText editTextComment;
+    Button saveBtn;
+    boolean name;
+    boolean date;
+    boolean charge;
+    Subscription newSub;
+    boolean add;
+    boolean remove;
+    boolean edit;
+
+
 
     //Menu inflater, worker.
     @Override
@@ -63,25 +85,48 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent;
         switch (item.getItemId()){
             case R.id.add_sub:
-                Log.i("Menu item selected", "add_sub");
+                Log.i("Menu item add", String.valueOf(add));
+                if (!add){
+                    add = true;
+                    Log.i("Menu item selected", "add_sub");
+                    setVisibilityMain(0);
+                    setVisibilityAdd(true);
+                }else {
+                    add = false;
+                    setVisibilityMain(1);
+                    setVisibilityAdd(false);
+                }
 
-                myIntent = new Intent(MainActivity.this, AddSubscription.class);
-                startActivityForResult( myIntent,0);
-                return true;
+
             case  R.id.remove_sub:
-                Log.i("Menu item selected", "remove_sub");
+                if (!remove){
+                    remove = true;
+                    Log.i("Menu item selected", "remove_sub");
+                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                            Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + MainActivity.this.subList.get(position),Toast.LENGTH_LONG);
+                            toast.show();
 
 
 
 
 
 
+                            return false;
+                        }
+                    });
+                }else {
+                    remove  = false;
+                }
 
                 //myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
                 //startActivityForResult( myIntent,0);
-                return true;
             case  R.id.edit_sub:
                 Log.i("Menu item selected", "edit_sub");
+
+                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -120,62 +165,232 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFromFile(this);
-        //subList = SubscriptionList.getSubList();
 
-        context = getApplicationContext();
-        Log.i("THIS IS THE CONTEXT OF MAIN: ", context.toString());
 
 
         listView = findViewById(R.id.listView);
         textView = findViewById(R.id.totalText);
-
-        Subscription newSub = new Subscription();
-        newSub.setDate("1234-12-12");
-        newSub.setName("The Name");
-        newSub.setCharge((float) 12.33);
-        subList.add(newSub);
-        setList(subList);
-        Log.i("THIS IS THE LIST", "" + subList);
-        //saveInFile(this);
-        //SubscriptionList.addToList(newSub);
+        name = false;
+        date = false;
+        charge = false;
+        add = false;
+        edit = false;
+        remove  = false;
 
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
-                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
-                Log.i("Person Tapped: ", String.valueOf(SubscriptionList.getSubList().get(i)));
-                Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + SubscriptionList.getSubList().get(i),Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
+        // The Text Stuff.
+        editTextName = findViewById(R.id.editTextName);
+        editTextName.addTextChangedListener(nameTextWatcher);
 
-//        float sum= (float) 0.0;
-//        for (float value : sublist.values()) {
-//            sum += value;
-//        }
+        editTextDate = findViewById(R.id.editTextDate);
+        editTextDate.addTextChangedListener(dateTextWatcher);
+
+        editTextCharge = findViewById(R.id.editTextCharge);
+        editTextCharge.addTextChangedListener(chargeTextWatcher);
+
+        editTextComment = findViewById(R.id.editTextComment);
+
+        saveBtn = findViewById(R.id.buttonSave);
+        //Toast.makeText(this, "Please enter a Subscription name, date started and charge.",Toast.LENGTH_LONG).show();
+        saveBtn.setEnabled(false);
+        setVisibilityAdd(false);
+        updateExpense();
+
+
+        saveInFile(this);
+
+
+
+
+//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
+//                Log.i("Person Tapped: ", String.valueOf(MainActivity.this.subList.get(i)));
+//                Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + MainActivity.this.subList.get(i),Toast.LENGTH_LONG);
+//                toast.show();
+//                return false;
+//            }
+//        });
+
 
 
 
 
     }
+    private TextWatcher chargeTextWatcher = new TextWatcher() {
+        //can't get it working the way i want so left it as a hint type error, do the actually check later.
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String workingCharge = s.toString();
+            boolean isValid = true;
+
+            if (workingCharge.length() <= 0) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                editTextCharge.setError("Enter a Monthly Charge.");
+                saveBtn.setEnabled(false);
+
+            } else {
+                editTextCharge.setError(null);
+                charge = true;
+                if (name && date){
+                    saveBtn.setEnabled(true);
+                }
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {}
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    };
+
+    private TextWatcher nameTextWatcher = new TextWatcher() {
+        //can't get it working the way i want so left it as a hint type error, do the actually check later.
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String workingName = s.toString();
+            boolean isValid = true;
+
+            if (workingName.length() <= 0) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                editTextName.setError("Enter a name of Subscription.");
+                saveBtn.setEnabled(false);
+
+            } else {
+                editTextName.setError(null);
+                name = true;
+                if (charge && date){
+                    saveBtn.setEnabled(true);
+                }
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {}
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    };
+
+    private TextWatcher dateTextWatcher = new TextWatcher() {
+        //can't get it working the way i want so left it as a hint type error, do the actually check later.
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String working = s.toString();
+            boolean isValid = true;
+            if (working.length() <= 0) {
+                isValid = false;
+            }
+            else if (working.length()!= 10) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                editTextDate.setError("Enter a valid date: YYYY-MM-DD");
+                saveBtn.setEnabled(false);
+
+            } else {
+                editTextDate.setError(null);
+                date = true;
+                if (name && charge){
+                    saveBtn.setEnabled(true);
+                }
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+
+
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    };
+
+
+    public void saveSub(View view){
+
+        newSub = new Subscription();
+        Matcher m = Pattern.compile("[2-3][0-1][0-2][0-9]-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
+        if (!m.matches()){
+            saveBtn.setEnabled(false);
+            new AlertDialog.Builder(this)
+                    .setIcon((android.R.drawable.ic_dialog_alert))
+                    .setTitle("Hey!")
+                    .setMessage("Please enter a date in the format of YYYY-MM-DD and a real month and day.")
+                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Yes.
+                            saveBtn.setEnabled(true);
+                        }
+                    })
+                    .show();
+        }else{
+            saveBtn.setEnabled(true);
+            newSub.setDate(editTextDate.getText().toString());
+            //There is my hash map  to work with.
+            newSub.setName(editTextName.getText().toString());
+            //the date check verification.
+
+
+            try { //Basically a null catcher.
+                newSub.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
+            }catch (Exception e){
+                Log.i("Exception", e.toString());
+            }
+            new AlertDialog.Builder(this)
+                .setIcon((android.R.drawable.ic_dialog_alert))
+                .setTitle("Hey!")
+                .setMessage("Are you sure you want to add this Subscription?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Yes.
+                        Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
+                        newSub.setComment(editTextComment.getText().toString());
+                        subList.add(newSub);
+
+                        updateExpense();
+                        editTextName.getText().clear();
+                        editTextDate.getText().clear();
+                        editTextComment.getText().clear();
+                        editTextCharge.getText().clear();
+                        setVisibilityAdd(false);
+                        setVisibilityMain(1);
+                        saveInFile(getApplicationContext());
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+
+
+
+
+
+        }
+
+    }
+
+    public void updateExpense(){
+        float sum= (float) 0.0;
+        for (Subscription subscription : this.subList) {
+            sum += subscription.getCharge();
+        }
+        this.textView.setText(String.format("%s $%s", EXPENSE, sum));
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        ArrayAdapter<Subscription> arrayAdapter =  new ArrayAdapter<Subscription>(this, android.R.layout.simple_list_item_1, subList);
+        ArrayAdapter<Subscription> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.subList);
         listView.setAdapter(arrayAdapter);
-
-
-    }
-
-    public ArrayList<Subscription> getList(){
-        return SubscriptionList.getSubList();
-    }
-
-    public void setList(ArrayList<Subscription> subList) {
-        this.subList = subList;
     }
 
 
@@ -217,6 +432,28 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    public void setVisibilityAdd(boolean visible){
+        if (!visible){
+            editTextCharge.setVisibility(View.GONE);
+            editTextComment.setVisibility(View.GONE);
+            editTextDate.setVisibility(View.GONE);
+            editTextName.setVisibility(View.GONE);
+            saveBtn.setVisibility(View.GONE);
+        }else {
+            editTextCharge.setVisibility(View.VISIBLE);
+            editTextComment.setVisibility(View.VISIBLE);
+            editTextDate.setVisibility(View.VISIBLE);
+            editTextName.setVisibility(View.VISIBLE);
+            saveBtn.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void setVisibilityMain(int visible){
+        listView.setAlpha(visible);
+        textView.setAlpha(visible);
     }
 }
 

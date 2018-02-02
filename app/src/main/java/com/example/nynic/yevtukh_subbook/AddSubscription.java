@@ -38,8 +38,6 @@ public class AddSubscription extends AppCompatActivity {
     boolean charge;
     MainActivity activity;
     ArrayList<Subscription> subList;
-    private static final String FILENAME = "subscriptions.sav";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +49,10 @@ public class AddSubscription extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        SubscriptionList subscriptionList = new SubscriptionList();
+        ArrayList<Subscription> list =  subscriptionList.getSubList();
 
-        activity = new MainActivity();
-        subList = new ArrayList<>();
-        subList = activity.getList();
-        Toast.makeText(this, "These are the current entries: "+ subList, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "These are the current entries: "+ list, Toast.LENGTH_SHORT).show();
 
 
         name = false;
@@ -185,7 +182,7 @@ public class AddSubscription extends AppCompatActivity {
         Subscription newSub = new Subscription();
 
 
-        Log.i("List contents", SubscriptionList.getSubList().toString());
+        //Log.i("List contents", SubscriptionList.getSubList().toString());
 
         Matcher m = Pattern.compile("[0-9]{4}-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
         if (!m.matches()){
@@ -218,8 +215,7 @@ public class AddSubscription extends AppCompatActivity {
                 newSub.setComment(editTextComment.getText().toString());
 
                 Log.i("This is the new sub",newSub.printSub());
-                subList.add(newSub);
-                activity.setList(subList);
+                //activity.addSub(newSub);
                 activity.saveInFile(this);
 
 
