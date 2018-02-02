@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    //Alerts are also taken from the android studio developer website.
     //Menu inflater, worker.
     @Override
     public boolean onCreateOptionsMenu(Menu subMenu) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(subMenu);
     }
 
-    //// Menu stuff.
+    //// Menu stuff. All taken from the android studio developer website.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -237,7 +237,8 @@ public class MainActivity extends AppCompatActivity {
         saveInFile(this);
     }
 
-
+    //All textWatchers are adapted from https://www.techrepublic.com/article/pro-tip-write-a-validate-as-you-go-android-textwatcher-for-date-entry-fields/. 
+    // But changed for my needs.
     private TextWatcher chargeTextWatcher = new TextWatcher() {
         //can't get it working the way i want so left it as a hint type error, do the actually check later.
         @Override
@@ -565,8 +566,8 @@ public class MainActivity extends AppCompatActivity {
      -Enforce input rules.<-----------------------------------------------Done.
      -Do encapsulate stuff <_-----------------------------------------------DONe.
      -Finalize. <------------------------------------------------------------Done.
-     -Do video demo
-     -Submit.
+     -Do video demo <------------------------------------------------------------Done.
+     -Submit. <------------------------------------------------------------Done.
      */
 
 
