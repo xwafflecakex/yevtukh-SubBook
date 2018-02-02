@@ -1,5 +1,7 @@
 These are some notes on the how-to's of this app.
-DISclAIMER: The java files Storage and AddSubscriptionList are valid classes but are not required for use. I kept them  more as a momento of the progress ttowards build the app.
+
+DISClAIMER:The MainActivity still has about 14 lines of TODO, but all marked Done. This is kept as a memento.
+DISClAIMER: The java files Storage and AddSubscriptionList are valid classes but are not required for use. I kept them  more as a momento of the progress ttowards build the app.
 
 A video demo is on youtube via this URL: https://www.youtube.com/watch?v=jkCGc8jmPmw&feature=youtu.be
 
