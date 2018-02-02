@@ -137,7 +137,7 @@
         android:layout_marginTop="8dp"
         android:background="#63ef28"
         android:onClick="editSub"
-        android:text="Save"
+        android:text="Update"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

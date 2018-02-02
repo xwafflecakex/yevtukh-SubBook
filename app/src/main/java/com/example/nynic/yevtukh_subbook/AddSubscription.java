@@ -49,10 +49,7 @@ public class AddSubscription extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SubscriptionList subscriptionList = new SubscriptionList();
-        ArrayList<Subscription> list =  subscriptionList.getSubList();
 
-        Toast.makeText(this, "These are the current entries: "+ list, Toast.LENGTH_SHORT).show();
 
 
         name = false;

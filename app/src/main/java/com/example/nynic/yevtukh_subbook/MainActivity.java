@@ -48,27 +48,27 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Subscription> subList;
+    private ArrayList<Subscription> subList;
     private static final String FILENAME = "subscriptions.sav";
     private static final String EXPENSE = "TOTAL MONTHLY EXPENSE:";
     private ListView listView;
     private TextView textView;
-    EditText editTextName;
-    EditText editTextDate;
-    EditText editTextCharge;
-    EditText editTextComment;
-    Button saveBtn;
-    Button editBtn;
+    private EditText editTextName;
+    private EditText editTextDate;
+    private EditText editTextCharge;
+    private EditText editTextComment;
+    private Button saveBtn;
+    private Button editBtn;
     boolean name;
     boolean date;
     boolean charge;
-    Subscription newSub;
+    private Subscription newSub;
     boolean add;
     boolean remove;
     boolean edit;
-    Context context;
-    AlertDialog.Builder alert;
-    ArrayAdapter<Subscription> arrayAdapter;
+    private AlertDialog.Builder alert;
+    private ArrayAdapter<Subscription> arrayAdapter;
+    int positionIndex;
 
 
 
@@ -90,9 +90,17 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.add_sub:
                 if (!add){
+                    Toast.makeText(this, "ADD SElECTED",Toast.LENGTH_LONG).show();
                     add = true;
                     setVisibilityMain(0);
                     setVisibilityAdd(true);
+                    editTextName.getText().clear();
+                    editTextDate.getText().clear();
+                    editTextComment.getText().clear();
+                    editTextCharge.getText().clear();
+                    editBtn.setVisibility(View.GONE);
+                    editBtn.setEnabled(false);
+                    invalidateOptionsMenu();
                 }else {
                     add = false;
                     setVisibilityMain(1);
@@ -133,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }else {
                     remove  = false;
+
                 }return true;
 
             case R.id.edit_sub:
@@ -141,10 +150,36 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Menu item selected", "edit_sub");
                     edit=true;
                     Toast.makeText(getApplicationContext(), "Pick a Subscription to edit.",Toast.LENGTH_LONG).show();
+                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int position, long l) {
+                            setVisibilityAdd(true);
+                            saveBtn.setVisibility(View.GONE);
+                            editBtn.setVisibility(View.VISIBLE);
+                            editBtn.setEnabled(true);
+                            setVisibilityMain(0);
+                            positionIndex = position;
 
+
+                            editTextName.setText(subList.get(positionIndex).getName());
+                            editTextDate.setText(subList.get(positionIndex).getDate());
+                            editTextComment.setText(subList.get(positionIndex).getComment());
+                            try { //Basically a null catcher.
+                                editTextCharge.setText(String.format("%.2f",subList.get(positionIndex).getCharge()));
+                            }catch (Exception e){
+                                Log.i("Exception", e.toString());
+                            }
+
+
+                            return false;
+                        }
+                    });
 
                 }else {
                     edit = false;
+                    setVisibilityMain(1);
+                    setVisibilityAdd(false);
+                    editBtn.setVisibility(View.GONE);
                 }
 
                 //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
@@ -193,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.buttonSave);
         editBtn = findViewById(R.id.buttonEdit);
         editBtn.setEnabled(false);
+        editBtn.setVisibility(View.GONE);
         saveBtn.setEnabled(false);
         setVisibilityAdd(false);
         updateExpense();
@@ -295,9 +331,16 @@ public class MainActivity extends AppCompatActivity {
     public void editSub(View view){
 
         ///Need to change the save stuff to edit like the text already in the fields then it just saves not adds.
+
+        final Subscription edit = subList.get(positionIndex);
+        Log.i("THE ITEM TO BE EDITED", "" + edit);
+
+
+
+
         Matcher m = Pattern.compile("[2-3][0-1][0-2][0-9]-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
         if (!m.matches()){
-            saveBtn.setEnabled(false);
+            editBtn.setEnabled(false);
             new AlertDialog.Builder(this)
                     .setIcon((android.R.drawable.ic_dialog_alert))
                     .setTitle("Hey!")
@@ -306,54 +349,50 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Yes.
-                            saveBtn.setEnabled(true);
+                            editBtn.setEnabled(true);
                         }
                     })
                     .show();
         }else{
-            saveBtn.setEnabled(true);
-            newSub.setDate(editTextDate.getText().toString());
-            //There is my hash map  to work with.
-            newSub.setName(editTextName.getText().toString());
-            //the date check verification.
+            editBtn.setEnabled(true);
 
 
+            edit.setName(editTextName.getText().toString());
+            edit.setDate(editTextDate.getText().toString());
+            edit.setComment(editTextComment.getText().toString());
             try { //Basically a null catcher.
-                newSub.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
+                edit.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
             }catch (Exception e){
                 Log.i("Exception", e.toString());
             }
             alert = new AlertDialog.Builder(this);
             alert.setIcon((android.R.drawable.ic_dialog_alert));
             alert.setTitle("Hey!");
-            alert.setMessage("Are you sure you want to add this Subscription?");
+            alert.setMessage("Are you sure you want to Update this Subscription?");
             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     //Yes.
-                    Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
-                    newSub.setComment(editTextComment.getText().toString());
-                    //subList.add(newSub);
+                    Toast.makeText(getApplicationContext(), "Updated!", Toast.LENGTH_LONG).show();
+                    subList.set(positionIndex,edit);
 
                     updateExpense();
+                    arrayAdapter.notifyDataSetChanged();
+                    setVisibilityAdd(false);
+                    setVisibilityMain(1);
+                    saveInFile(getApplicationContext());
                     editTextName.getText().clear();
                     editTextDate.getText().clear();
                     editTextComment.getText().clear();
                     editTextCharge.getText().clear();
-                    setVisibilityAdd(false);
-                    setVisibilityMain(1);
-                    saveInFile(getApplicationContext());
+                    editBtn.setEnabled(false);
+                    editBtn.setVisibility(View.GONE);
+                    positionIndex = 0;
                 }
             });
             alert.setNegativeButton("No", null);
             AlertDialog dialog = alert.create();
             dialog.show();
-
-
-
-
-
-
 
         }
 
@@ -381,7 +420,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             saveBtn.setEnabled(true);
             newSub.setDate(editTextDate.getText().toString());
-            //There is my hash map  to work with.
             newSub.setName(editTextName.getText().toString());
             //the date check verification.
 
@@ -401,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                         //Yes.
                         Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
                         newSub.setComment(editTextComment.getText().toString());
-                        //subList.add(newSub);
+                        subList.add(newSub);
 
                         updateExpense();
                         editTextName.getText().clear();
@@ -525,8 +563,8 @@ public class MainActivity extends AppCompatActivity {
      -Link sub objects to the ArrayList.<-----------------------------------------------Done.
      -Calc total, and display<-----------------------------------------------Done.
      -Enforce input rules.<-----------------------------------------------Done.
-     -Do encapsulate stuff
-     -Finalize.
+     -Do encapsulate stuff <_-----------------------------------------------DONe.
+     -Finalize. <------------------------------------------------------------Done.
      -Do video demo
      -Submit.
      */
