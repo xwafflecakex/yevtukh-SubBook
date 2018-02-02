@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextCharge;
     EditText editTextComment;
     Button saveBtn;
+    Button editBtn;
     boolean name;
     boolean date;
     boolean charge;
@@ -86,13 +87,10 @@ public class MainActivity extends AppCompatActivity {
     //// Menu stuff.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent myIntent;
         switch (item.getItemId()){
             case R.id.add_sub:
-                Log.i("Menu item add", String.valueOf(add));
                 if (!add){
                     add = true;
-                    Log.i("Menu item selected", "add_sub");
                     setVisibilityMain(0);
                     setVisibilityAdd(true);
                 }else {
@@ -100,17 +98,17 @@ public class MainActivity extends AppCompatActivity {
                     setVisibilityMain(1);
                     setVisibilityAdd(false);
                 }
+                return true;
 
 
             case  R.id.remove_sub:
                 if (!remove){
                     remove = true;
                     Log.i("Menu item selected", "remove_sub");
+                    Toast.makeText(getApplicationContext(), "Pick a Subscription to remove. Hold to delete. ",Toast.LENGTH_LONG).show();
                     listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                         @Override
                         public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int position, long l) {
-                            Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + MainActivity.this.subList.get(position),Toast.LENGTH_LONG);
-
                              new AlertDialog.Builder(MainActivity.this)
                                     .setIcon((android.R.drawable.ic_dialog_alert))
                                     .setTitle("Hey!")
@@ -135,12 +133,19 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }else {
                     remove  = false;
-                }
+                }return true;
 
-                //myIntent = new Intent(MainActivity.this, RemoveSubscription.class);
-                //startActivityForResult( myIntent,0);
-            case  R.id.edit_sub:
-                Log.i("Menu item selected", "edit_sub");
+            case R.id.edit_sub:
+
+                if (!edit){
+                    Log.i("Menu item selected", "edit_sub");
+                    edit=true;
+                    Toast.makeText(getApplicationContext(), "Pick a Subscription to edit.",Toast.LENGTH_LONG).show();
+
+
+                }else {
+                    edit = false;
+                }
 
                 //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
 
@@ -153,29 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-//    public void deleteSub(final LinkedHashMap map){
-//
-//
-//        //If tapped on do shit. Don't know of use yet.
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { //the view is the row, the int is the position, the long is more  detailed.
-//                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
-//                Log.i("Person Tapped: ", String.valueOf(subList.get(i)));
-//                Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + subList.get(i),Toast.LENGTH_LONG);
-//                toast.show();
-//
-//                //Now if remove button pressed, we simply tap the wanted item to remove.
-//
-//                //Toast toast = Toast.makeText(getApplicationContext(), "Hello " + testSub.get(i),Toast.LENGTH_LONG);
-//                //toast.show();
-//            }
-//        });
-//    }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,33 +191,17 @@ public class MainActivity extends AppCompatActivity {
         editTextComment = findViewById(R.id.editTextComment);
 
         saveBtn = findViewById(R.id.buttonSave);
-        //Toast.makeText(this, "Please enter a Subscription name, date started and charge.",Toast.LENGTH_LONG).show();
+        editBtn = findViewById(R.id.buttonEdit);
+        editBtn.setEnabled(false);
         saveBtn.setEnabled(false);
         setVisibilityAdd(false);
         updateExpense();
 
 
         saveInFile(this);
-
-
-
-
-//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
-//                Log.i("Person Tapped: ", String.valueOf(MainActivity.this.subList.get(i)));
-//                Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + MainActivity.this.subList.get(i),Toast.LENGTH_LONG);
-//                toast.show();
-//                return false;
-//            }
-//        });
-
-
-
-
-
     }
+
+
     private TextWatcher chargeTextWatcher = new TextWatcher() {
         //can't get it working the way i want so left it as a hint type error, do the actually check later.
         @Override
@@ -320,14 +286,78 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         @Override
-        public void afterTextChanged(Editable editable) {
+        public void afterTextChanged(Editable editable) {}
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    };
+
+
+    public void editSub(View view){
+
+        ///Need to change the save stuff to edit like the text already in the fields then it just saves not adds.
+        Matcher m = Pattern.compile("[2-3][0-1][0-2][0-9]-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
+        if (!m.matches()){
+            saveBtn.setEnabled(false);
+            new AlertDialog.Builder(this)
+                    .setIcon((android.R.drawable.ic_dialog_alert))
+                    .setTitle("Hey!")
+                    .setMessage("Please enter a date in the format of YYYY-MM-DD and a real month and day.")
+                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Yes.
+                            saveBtn.setEnabled(true);
+                        }
+                    })
+                    .show();
+        }else{
+            saveBtn.setEnabled(true);
+            newSub.setDate(editTextDate.getText().toString());
+            //There is my hash map  to work with.
+            newSub.setName(editTextName.getText().toString());
+            //the date check verification.
+
+
+            try { //Basically a null catcher.
+                newSub.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
+            }catch (Exception e){
+                Log.i("Exception", e.toString());
+            }
+            alert = new AlertDialog.Builder(this);
+            alert.setIcon((android.R.drawable.ic_dialog_alert));
+            alert.setTitle("Hey!");
+            alert.setMessage("Are you sure you want to add this Subscription?");
+            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //Yes.
+                    Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
+                    newSub.setComment(editTextComment.getText().toString());
+                    //subList.add(newSub);
+
+                    updateExpense();
+                    editTextName.getText().clear();
+                    editTextDate.getText().clear();
+                    editTextComment.getText().clear();
+                    editTextCharge.getText().clear();
+                    setVisibilityAdd(false);
+                    setVisibilityMain(1);
+                    saveInFile(getApplicationContext());
+                }
+            });
+            alert.setNegativeButton("No", null);
+            AlertDialog dialog = alert.create();
+            dialog.show();
+
+
+
+
 
 
 
         }
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-    };
+
+    }
 
 
     public void saveSub(View view){
@@ -487,13 +517,13 @@ public class MainActivity extends AppCompatActivity {
     /*TODO
      -Gonna use ArrayList with list view. <-----------------------------------------------------------Done.
      -For the plus make two options, add or edit drop-downs. // made a separate edit button<---------Done.
-     -Need to make activities for add_sub for input of details then storing them.
-     -Make activities for remove_sub removing details gonna use name and charge as a type of id.
-     -Add back buttons for both activities.
+     -Need to make activities for add_sub for input of details then storing them.<-----------------------------------------------Done.
+     -Make activities for remove_sub removing details gonna use name and charge as a type of id.<-----------------------------------------------Done.
+     -Add back buttons for both activities. <-----------------------------------------------Abandon.
      -Add class subscription that makes sub objects. <-----------------------------------------------Done.
-     -Link sub objects to the ArrayList.
-     -Calc total, and display
-     -Enforce input rules.
+     -Link sub objects to the ArrayList.<-----------------------------------------------Done.
+     -Calc total, and display<-----------------------------------------------Done.
+     -Enforce input rules.<-----------------------------------------------Done.
      -Do encapsulate stuff
      -Finalize.
      -Do video demo
