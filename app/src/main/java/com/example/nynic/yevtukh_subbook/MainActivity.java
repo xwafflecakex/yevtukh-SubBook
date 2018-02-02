@@ -1,5 +1,6 @@
 package com.example.nynic.yevtukh_subbook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -32,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<Subscription> subList;
     private static final String FILENAME = "subscriptions.sav";
-
+    Context context;
     private ListView listView;
     private TextView textView;
 
@@ -109,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loadFromFile(this);
+        //subList = SubscriptionList.getSubList();
+
+        context = getApplicationContext();
+        Log.i("THIS IS THE CONTEXT OF MAIN: ", context.toString());
 
 
         listView = findViewById(R.id.listView);
@@ -118,28 +133,11 @@ public class MainActivity extends AppCompatActivity {
         newSub.setDate("1234-12-12");
         newSub.setName("The Name");
         newSub.setCharge((float) 12.33);
-        SubscriptionList.addToList(newSub);
-        //subscriptionList.setSubList(subList);
-//        subList.add("Rob");
-//        subList.add("Kristen");
-//        subList.add("Tommy");
-//        subList.add("Ralphie");
-//        subList.add("Ralphie");
-//        subList.add("Ralphie");
-//        subList.add("Ralphie");
-//        subList.add("Ralphie");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-//        subList.add("Tommy");
-
-
-        //Using an array adapter to change to a list format.
-
+        subList.add(newSub);
+        setList(subList);
+        Log.i("THIS IS THE LIST", "" + subList);
+        //saveInFile(this);
+        //SubscriptionList.addToList(newSub);
 
 
 
@@ -166,20 +164,60 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        subList = SubscriptionList.getSubList();
         ArrayAdapter<Subscription> arrayAdapter =  new ArrayAdapter<Subscription>(this, android.R.layout.simple_list_item_1, subList);
         listView.setAdapter(arrayAdapter);
 
 
     }
 
-//    public List<Subscription> getList(){
-//        return subList;
-//    }
-//
-//    public void setList(ArrayList<Subscription> subList) {
-//        this.subList = subList;
-//    }
+    public ArrayList<Subscription> getList(){
+        return SubscriptionList.getSubList();
+    }
+
+    public void setList(ArrayList<Subscription> subList) {
+        this.subList = subList;
+    }
+
+
+    public void saveInFile(Context context) {
+        try {
+            FileOutputStream fos = context.getApplicationContext().openFileOutput(FILENAME,
+                    Context.MODE_PRIVATE);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fos));
+            Gson gson = new Gson();
+            gson.toJson(subList, out);
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadFromFile(Context context) {
+        try {
+            FileInputStream fis = context.getApplicationContext().openFileInput(FILENAME);
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+
+            Gson gson = new Gson();
+
+            //Taken https://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt
+            // 2018-01-24
+
+            Type listType = new TypeToken<ArrayList<Subscription>>(){}.getType();
+
+            subList = gson.fromJson(in, listType);
+
+            if (subList == null){
+                subList = new ArrayList<>();
+            }
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+
+        }
+
+    }
 }
 
 

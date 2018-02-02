@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
+import android.content.Context;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 public class AddSubscription extends AppCompatActivity {
 
-    ArrayList<Subscription> subList = SubscriptionList.getSubList();
+    Context context;
     EditText editTextName;
     EditText editTextDate;
     EditText editTextCharge;
@@ -36,9 +36,15 @@ public class AddSubscription extends AppCompatActivity {
     boolean name;
     boolean date;
     boolean charge;
+    MainActivity activity;
+    ArrayList<Subscription> subList;
+    private static final String FILENAME = "subscriptions.sav";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        context = getApplicationContext();
+        Log.i("CONTEXT",context.toString());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_subscription);
         // Really wanted to get the back button working, thanks to this https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar.
@@ -46,6 +52,10 @@ public class AddSubscription extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        activity = new MainActivity();
+        subList = new ArrayList<>();
+        subList = activity.getList();
+        Toast.makeText(this, "These are the current entries: "+ subList, Toast.LENGTH_SHORT).show();
 
 
         name = false;
@@ -65,19 +75,8 @@ public class AddSubscription extends AppCompatActivity {
         editTextComment = findViewById(R.id.editTextComment);
 
         saveBtn = findViewById(R.id.buttonSave);
-        Toast.makeText(this, "Please enter a Subscription name, date started and charge.",Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Please enter a Subscription name, date started and charge.",Toast.LENGTH_LONG).show();
         saveBtn.setEnabled(false);
-
-
-        //Testing the fields.
-        Log.i("Name",editTextName.getText().toString());
-        Log.i("date",editTextDate.getText().toString());
-        //Restrict negative numbers. Done.
-        Log.i("Charge",editTextCharge.getText().toString());
-        Log.i("Comment",editTextComment.getText().toString());
-
-
-
 
 
     }
@@ -145,21 +144,10 @@ public class AddSubscription extends AppCompatActivity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String working = s.toString();
             boolean isValid = true;
-            //Year
-            if (working.length()== 4 && before == 0) {
-                Log.i("working", working);
-                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                if (Integer.parseInt(working) < 3 || Integer.parseInt(working)>12) {
-                    isValid = false;
-                } else if (Integer.parseInt(working) > currentYear){
-                    isValid = false;
-                }
+            if (working.length() <= 0) {
+                isValid = false;
             }
-            //Month
-            else if (working.length()== 4 && before ==0) {
-                String enteredYear = working.substring(3);
-                Log.i("entered Year", enteredYear);
-            } else if (working.length()!= 10) {
+            else if (working.length()!= 10) {
                 isValid = false;
             }
 
@@ -230,12 +218,18 @@ public class AddSubscription extends AppCompatActivity {
                 newSub.setComment(editTextComment.getText().toString());
 
                 Log.i("This is the new sub",newSub.printSub());
-            try {
-                SubscriptionList.addToList(newSub);
-            }catch (Exception e){
-                Log.i("Exception", e.toString());
-            }
-                //now gson save stuff.
+                subList.add(newSub);
+                activity.setList(subList);
+                activity.saveInFile(this);
+
+
+            editTextName.getText().clear();
+            editTextDate.getText().clear();
+            editTextComment.getText().clear();
+            editTextCharge.getText().clear();
+
+            Toast.makeText(this, "You can now add More Subscriptions.", Toast.LENGTH_LONG).show();
+            //now gson save stuff.
 
 
 
