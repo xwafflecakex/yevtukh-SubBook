@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
     boolean add;
     boolean remove;
     boolean edit;
+    Context context;
+    AlertDialog.Builder alert;
+    ArrayAdapter<Subscription> arrayAdapter;
+
 
 
 
@@ -104,15 +108,28 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Menu item selected", "remove_sub");
                     listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                         @Override
-                        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int position, long l) {
                             Toast  toast = Toast.makeText(getApplicationContext(), "Hello " + MainActivity.this.subList.get(position),Toast.LENGTH_LONG);
-                            toast.show();
 
+                             new AlertDialog.Builder(MainActivity.this)
+                                    .setIcon((android.R.drawable.ic_dialog_alert))
+                                    .setTitle("Hey!")
+                                    .setMessage("Are you sure you want to REMOVE this Subscription?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            //Yes.
+                                            Toast.makeText(getApplicationContext(), "Removed", Toast.LENGTH_LONG).show();
+                                            Log.i("REMOVEING", ""+subList.get(position));
+                                            subList.remove(position);
+                                            updateExpense();
+                                            saveInFile(getApplicationContext());
+                                            arrayAdapter.notifyDataSetChanged();
 
-
-
-
-
+                                        }
+                                    })
+                                    .setNegativeButton("No", null)
+                                    .show();
                             return false;
                         }
                     });
@@ -344,17 +361,17 @@ public class MainActivity extends AppCompatActivity {
             }catch (Exception e){
                 Log.i("Exception", e.toString());
             }
-            new AlertDialog.Builder(this)
-                .setIcon((android.R.drawable.ic_dialog_alert))
-                .setTitle("Hey!")
-                .setMessage("Are you sure you want to add this Subscription?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alert = new AlertDialog.Builder(this);
+                alert.setIcon((android.R.drawable.ic_dialog_alert));
+                alert.setTitle("Hey!");
+                alert.setMessage("Are you sure you want to add this Subscription?");
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Yes.
                         Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
                         newSub.setComment(editTextComment.getText().toString());
-                        subList.add(newSub);
+                        //subList.add(newSub);
 
                         updateExpense();
                         editTextName.getText().clear();
@@ -365,9 +382,12 @@ public class MainActivity extends AppCompatActivity {
                         setVisibilityMain(1);
                         saveInFile(getApplicationContext());
                     }
-                })
-                .setNegativeButton("No", null)
-                .show();
+                });
+                alert.setNegativeButton("No", null);
+                AlertDialog dialog = alert.create();
+                dialog.show();
+
+
 
 
 
@@ -389,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ArrayAdapter<Subscription> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.subList);
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.subList);
         listView.setAdapter(arrayAdapter);
     }
 
@@ -454,6 +474,10 @@ public class MainActivity extends AppCompatActivity {
     public void setVisibilityMain(int visible){
         listView.setAlpha(visible);
         textView.setAlpha(visible);
+    }
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.i("In Destroy method","The app is closing");
     }
 }
 
