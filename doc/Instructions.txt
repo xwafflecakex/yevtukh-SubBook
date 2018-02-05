@@ -1,0 +1,27 @@
+These are some notes on the how-to's of this app.
+
+DISClAIMER:The MainActivity still has about 14 lines of TODO, but all marked Done. This is kept as a memento.
+DISClAIMER: The java files Storage and AddSubscriptionList are valid classes but are not required for use. I kept them  more as a momento of the progress ttowards build the app.
+
+A video demo is on youtube via this URL: https://www.youtube.com/watch?v=jkCGc8jmPmw&feature=youtu.be
+
+So the premiss is that that the subscriptions are always on the main screen and you use the top right menu buttons for actions.
+
+Actions include:
+  -Adding a Subscription: Should make sense that its the "plus" icon, you click it once and the required fields show up.
+                          The fields all have verification and notice alerts to tell how to input the data. After hitting the 
+                           save button you should get an alert checking that thats what you want. "yes" saves it and "returns" to
+                           main menu, no simply keeps you as is so you can change anything last mintue.
+                          
+  -Removing a Subscription: This is the "x" on the top right. You simply click the button, a toast appears to let you know how to use it.
+                            A long click on a selected subscription will cause an alert to make sure you want to delete the the item                                   chosen.  Yes removes it, no does nothing. You can also cancel by selecting a different menu icon.
+                            
+  -Editing a Subscription: This is the "pencil"  icon, like the remove a toast shows up telling you how to use it, then a long click on the                             item will select it to edit. Then the same fields as the save option are presented, but the fields already                                 contain the subscription you want to edit, so you can percisly change anything you like of that subscription.                                An alert will show up for verification and the fields are activly verifing the text to make sure he data is                                 inputted up to spec. Hit yes for update and it will return to main menu with the updated subscription. 
+  
+  On the bottom of the screen on the main menu is the Total Monthly expense that is activly updating after each of the 3 options.
+  
+  If you ever get stuck on Edit or Add, you just need to click the same menu icon to return to main menu. I originally developed different activities for each such that it would open a new activity screen for those things with a back button. However had to abandon that route  because i could not get the subscription list or the saving to work properly between each activity. The record of this is in the commit history.
+  
+  DISCLAIMER:  Did all shorts of testing without crashs but I may have missed some.
+  
+  If a button doesn't work on the first click, try again, I believe its a problem with the menu option inflator.
