@@ -7,3 +7,5 @@ Can add, edit, remove Subscriptions via the top menu buttons.
 The data is savied on machine via Gson.
 More instructions, documentation and a video demo can be found in the doc folder.
 Please read the instructions in the doc folder before use.
+
+Uses SDK 26.
