@@ -3,7 +3,6 @@ package com.example.nynic.yevtukh_subbook;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,12 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 
@@ -37,11 +34,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     int positionIndex;
 
 
-
-
     //Menu inflater, worker.
     @Override
     public boolean onCreateOptionsMenu(Menu subMenu) {
@@ -90,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.add_sub:
                 if (!add){
-                    Toast.makeText(this, "ADD SElECTED",Toast.LENGTH_LONG).show();
                     add = true;
                     setVisibilityMain(0);
                     setVisibilityAdd(true);
@@ -108,11 +97,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
 
-
             case  R.id.remove_sub:
                 if (!remove){
                     remove = true;
-                    Log.i("Menu item selected", "remove_sub");
+                    //Log.i("Menu item selected", "remove_sub");
                     Toast.makeText(getApplicationContext(), "Pick a Subscription to remove. Hold to delete. ",Toast.LENGTH_LONG).show();
                     listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                         @Override
@@ -147,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.edit_sub:
 
                 if (!edit){
-                    Log.i("Menu item selected", "edit_sub");
+                    //Log.i("Menu item selected", "edit_sub");
                     edit=true;
                     Toast.makeText(getApplicationContext(), "Pick a Subscription to edit.",Toast.LENGTH_LONG).show();
                     listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -169,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
                             }catch (Exception e){
                                 Log.i("Exception", e.toString());
                             }
-
-
                             return false;
                         }
                     });
@@ -182,15 +168,10 @@ public class MainActivity extends AppCompatActivity {
                     editBtn.setVisibility(View.GONE);
                 }
 
-                //adapterView.setVisibility(View.GONE); //After a tap on  a name, the list disapears.
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-
-
 
     }
 
@@ -199,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFromFile(this);
-
-
 
         listView = findViewById(R.id.listView);
         textView = findViewById(R.id.totalText);
@@ -212,19 +191,14 @@ public class MainActivity extends AppCompatActivity {
         remove  = false;
 
 
-
         // The Text Stuff.
         editTextName = findViewById(R.id.editTextName);
         editTextName.addTextChangedListener(nameTextWatcher);
-
         editTextDate = findViewById(R.id.editTextDate);
         editTextDate.addTextChangedListener(dateTextWatcher);
-
         editTextCharge = findViewById(R.id.editTextCharge);
         editTextCharge.addTextChangedListener(chargeTextWatcher);
-
         editTextComment = findViewById(R.id.editTextComment);
-
         saveBtn = findViewById(R.id.buttonSave);
         editBtn = findViewById(R.id.buttonEdit);
         editBtn.setEnabled(false);
@@ -232,11 +206,8 @@ public class MainActivity extends AppCompatActivity {
         saveBtn.setEnabled(false);
         setVisibilityAdd(false);
         updateExpense();
-
-
         saveInFile(this);
     }
-
 
     private TextWatcher chargeTextWatcher = new TextWatcher() {
         //can't get it working the way i want so left it as a hint type error, do the actually check later.
@@ -266,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     };
-
     private TextWatcher nameTextWatcher = new TextWatcher() {
         //can't get it working the way i want so left it as a hint type error, do the actually check later.
         @Override
@@ -295,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     };
-
     private TextWatcher dateTextWatcher = new TextWatcher() {
         //can't get it working the way i want so left it as a hint type error, do the actually check later.
         @Override
@@ -327,17 +296,9 @@ public class MainActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     };
 
-
     public void editSub(View view){
-
-        ///Need to change the save stuff to edit like the text already in the fields then it just saves not adds.
-
         final Subscription edit = subList.get(positionIndex);
-        Log.i("THE ITEM TO BE EDITED", "" + edit);
-
-
-
-
+        //Log.i("THE ITEM TO BE EDITED", "" + edit);
         Matcher m = Pattern.compile("[2-3][0-1][0-2][0-9]-[0-1][0-9]-[0-3][0-9]\\b").matcher(editTextDate.getText().toString());
         if (!m.matches()){
             editBtn.setEnabled(false);
@@ -422,8 +383,6 @@ public class MainActivity extends AppCompatActivity {
             newSub.setDate(editTextDate.getText().toString());
             newSub.setName(editTextName.getText().toString());
             //the date check verification.
-
-
             try { //Basically a null catcher.
                 newSub.setCharge(Float.parseFloat(editTextCharge.getText().toString()));
             }catch (Exception e){
@@ -440,7 +399,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
                         newSub.setComment(editTextComment.getText().toString());
                         subList.add(newSub);
-
                         updateExpense();
                         editTextName.getText().clear();
                         editTextDate.getText().clear();
@@ -473,14 +431,12 @@ public class MainActivity extends AppCompatActivity {
         this.textView.setText(String.format("%s $%s", EXPENSE, sum));
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.subList);
         listView.setAdapter(arrayAdapter);
     }
-
 
     public void saveInFile(Context context) {
         try {
@@ -516,8 +472,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-
+            if (subList == null){
+                subList = new ArrayList<>();
+            }
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -543,14 +503,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAlpha(visible);
         textView.setAlpha(visible);
     }
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.i("In Destroy method","The app is closing");
-    }
 }
-
-
-
 
 
     /*TODO
