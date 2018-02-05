@@ -1,0 +1,4 @@
+#Mon Feb 05 13:13:21 PST 2018
+base.0=C\:\\Users\\nynic\\AndroidStudioProjects\\yevtukhSubBook\\app\\build\\intermediates\\transforms\\dex\\release\\0
+path.0=classes.dex
+renamed.0=classes.dex
